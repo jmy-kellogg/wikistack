@@ -39,6 +39,7 @@ swig.setDefaults({cache: false});
 app.listen(3001, function () {
         console.log('Server is listening on port 3001!');
     });
+    
 // models.User.sync({force: true})
 // .then(function () {
 //     return models.Page.sync({force: true})

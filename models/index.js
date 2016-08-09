@@ -10,7 +10,7 @@ var pageSchema = {
     },
     urlTitle: {
         type: Sequelize.STRING,
-        allowNull: true,
+        allowNull: false,
     },
     content: {
         type: Sequelize.TEXT,
@@ -34,7 +34,23 @@ var pageConfig = {
 
 var Page = db.define('page', pageSchema, pageConfig);
 
-var User = db.define('user', {
+function generateUrlTitle (title) {
+  if (title) {
+    // Removes all non-alphanumeric characters from title
+    // And make whitespace underscore
+    return title.replace(/\s+/g, '_').replace(/\W/g, '');
+  } else {
+    // Generates random 5 letter string
+    return Math.random().toString(36).substring(2, 7);
+  }
+}
+
+
+Page.hook('beforeValidate', function(page) {
+  page.urlTitle = generateUrlTitle(page.title);
+})
+
+var userSchema = {
     name: {
         type: Sequelize.STRING,
         allowNull: false
@@ -44,7 +60,12 @@ var User = db.define('user', {
         allowNull: false,
         isEmail: true
     }
-});
+};
+
+
+var User = db.define('user', userSchema);
+
+Page.belongsTo(User, { as: 'author' });
 
 module.exports = {
   Page: Page,
